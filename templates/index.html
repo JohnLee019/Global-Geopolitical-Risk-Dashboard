@@ -3,52 +3,39 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jsvectormap/dist/jsvectormap.min.css" />
+    <script src="https://cdn.jsdelivr.net/npm/jsvectormap"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jsvectormap/dist/maps/world.js"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css')}}">
 </head>
 <body>
-    <h1>Global Geopolitical Risk Dashboard</h1>
-    <main class="dashboard">
-        <!-- news section (실시간 해드라인 몇 개 ) -->
-        <section class="news">
-            <h2>news section</h2>
-            <ul>
-                <li>headline1</li>
-                <li>headline2</li>
-                <li>headline3</li>
-                <li>headline4</li>
-            </ul>
-        </section>
-
-        <!-- economy section (금, 유가, 환율, 주가지수) -->
-        <section class="economy">
-            <h2>economy section</h2>
-            <div class="currency">
-                <form action="/exchange" method="POST">
-                    <select name="base" required>
-                        <option value="" disabled selected>Select base currency</option>
-                        {% for label, name in currency_list %}
-                        <option value="{{ label }}">{{ name }}</option>
-                        {% endfor %}
-                    </select>
-
-                    <span>to</span>
-                    
-                    <select name="target" required>
-                        <option value="" disabled selected>Select target currency</option>
-                        {% for label, name in currency_list %}
-                        <option value="{{ label }}">{{ name }}</option>
-                        {% endfor %}
-                    </select>
-                        <button type="submit">check</button>
-                </form>
+    <header>
+        <h1>Global Geopolitical Risk Dashboard</h1>
+    </header>
+    <div class="container">
+        <!-- 기본 나라 상태는 2D 형태에 사진에서 현재 각 나라에 경제 상황에 따라 나라에 색깔이 다르게 나오게 하기 -->
+        <div id="map"></div>
+        <div class="card">
+            <div class="card-header">
+                <p class="country-name">country name</p> 
+                <button id="back-button">← Back</button>
             </div>
-            <div class="exchanged_value">{{exchanged_value}}</div>
-        </section>
-
-        <!-- risk score -->
-        <section class="risk">
-            <h2>risk scores</h2>
-        </section>
-    </main>
+            <p class="risk">risk</p>
+            <!-- 현재 나라에 색깔을 바탕으로 risk level을 알려줌 -->
+            <div class="graph-data">
+                <!--각 버튼을 누르면 그에 따른 각 나라에 1 주일 간에 해당 데이터를 그래프로 보여주기 -->
+                <!-- 해당 버튼을 누르면 해당 데이터와 일치하는 그래프 생성 (이거는 js에서 evenlistender와 onclick 사용해서) -->
+                <button class="exchange-rate">Exchange Rate</button>
+                <button class="oil-price">Oil Price</button>
+                <button class="dollar-index">Dollar Index(DXY)</button>
+                <button class="vix">VIX</button>
+            </div>         
+            <!-- 약 3줄 정도에 gemini 2.5가 현재 경제 상황에 따른 주된 이유를 요약 (이거는 직접 검색을 시킬지 아니면 아니면 위에서 주어진 4개의 데이터로 inference 시킬지 고민해야 함) -->
+            <p class="ai-summary">Explanation of the Reasons of Current Economy</p>  
+            <!-- 그래프 들어갈 위치 -->
+            <div class="graph-cotainer"></div>
+        </div>
+    </div>
+    <script src="{{ url_for('static', filename='js/map.js')}}"></script>
 </body>
 </html>

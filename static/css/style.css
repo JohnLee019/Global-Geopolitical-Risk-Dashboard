@@ -1,0 +1,139 @@
+* {
+    box-sizing: border-box;
+}
+
+html, body {
+    height: 100%;
+    margin: 0;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f5f7fb;
+    color: #111827;
+    overflow: hidden;
+}
+
+header {
+    padding: 24px 32px 12px 32px;
+}
+
+header h1 {
+    margin: 0;
+    font-size: 2.2rem;
+    font-weight: 700;
+}
+
+.container {
+    display: flex;
+    gap: 24px;
+    width: 100%;
+    height: calc(100vh - 100px);
+    padding: 0 24px 24px 24px;
+    overflow: hidden;
+}
+
+#map {
+    flex: 1;
+    min-width: 0;
+    height: 100%;
+    overflow: hidden;
+    border-radius: 20px;
+}
+
+#map .jvm-container,
+#map svg {
+    width: 100% !important;
+    height: 100% !important;
+    display: block;
+}
+
+.card {
+    width: 0;
+    flex-shrink: 0;
+    height: 100%;
+    background: #ffffff;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+    padding: 0;
+}
+
+.card.active {
+    width: 360px;
+    padding: 24px;
+}
+
+.country-name {
+    margin: 0 0 12px 0;
+    font-size: 1.8rem;
+    font-weight: 700;
+}
+
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+.card-header .country-name {
+    margin: 0;
+}
+
+#back-button {
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    font-size: 0.95rem;
+    font-weight: 600;
+    padding: 6px 10px;
+    border-radius: 8px;
+}
+
+#back-button:hover {
+    background-color: #e5e7eb;
+}
+
+.risk {
+    display: inline-block;
+    margin: 0 0 24px 0;
+    padding: 8px 14px;
+    border-radius: 999px;
+    background-color: #fee2e2;
+    color: #b91c1c;
+    font-size: 0.95rem;
+    font-weight: 600;
+}
+
+.graph-data {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 24px;
+}
+
+.graph-data button {
+    padding: 14px 12px;
+    border: none;
+    border-radius: 12px;
+    background-color: #e5e7eb;
+    color: #111827;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.graph-data button:hover {
+    background-color: #d1d5db;
+}
+
+.ai-summary {
+    margin: 0;
+    padding: 18px;
+    border-radius: 16px;
+    background-color: #f3f4f6;
+    color: #374151;
+    line-height: 1.6;
+    font-size: 0.98rem;
+}
