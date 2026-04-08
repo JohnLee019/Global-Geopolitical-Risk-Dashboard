@@ -6,6 +6,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jsvectormap/dist/jsvectormap.min.css" />
     <script src="https://cdn.jsdelivr.net/npm/jsvectormap"></script>
     <script src="https://cdn.jsdelivr.net/npm/jsvectormap/dist/maps/world.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css')}}">
 </head>
 <body>
@@ -22,7 +23,7 @@
             </div>
             <p class="risk">risk</p>
             <!-- 현재 나라에 색깔을 바탕으로 risk level을 알려줌 -->
-            <div class="graph-data">
+            <div class="graph-datas">
                 <!--각 버튼을 누르면 그에 따른 각 나라에 1 주일 간에 해당 데이터를 그래프로 보여주기 -->
                 <!-- 해당 버튼을 누르면 해당 데이터와 일치하는 그래프 생성 (이거는 js에서 evenlistender와 onclick 사용해서) -->
                 <button class="exchange-rate">Exchange Rate</button>
@@ -30,12 +31,17 @@
                 <button class="dollar-index">Dollar Index(DXY)</button>
                 <button class="vix">VIX</button>
             </div>         
-            <!-- 약 3줄 정도에 gemini 2.5가 현재 경제 상황에 따른 주된 이유를 요약 (이거는 직접 검색을 시킬지 아니면 아니면 위에서 주어진 4개의 데이터로 inference 시킬지 고민해야 함) -->
-            <p class="ai-summary">Explanation of the Reasons of Current Economy</p>  
             <!-- 그래프 들어갈 위치 -->
-            <div class="graph-cotainer"></div>
+            <div class="graph-container">
+                <canvas id="graph"></canvas>
+                <div class="graph-error"></div>
+            </div>
+            <!-- 약 3줄 정도에 gemini 2.5가 현재 경제 상황에 따른 주된 이유를 요약 (이거는 직접 검색을 시킬지 아니면 아니면 위에서 주어진 4개의 데이터로 inference 시킬지 고민해야 함) -->
+            <p id="ai-explanation">Explanation of the Reasons of Current Economy</p>  
         </div>
     </div>
     <script src="{{ url_for('static', filename='js/map.js')}}"></script>
+    <script src="{{ url_for('static', filename='js/chart.js')}}"></script>
+    <script src="{{ url_for('static', filename='js/ai.js')}}"></script>
 </body>
 </html>
