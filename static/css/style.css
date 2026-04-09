@@ -1,3 +1,5 @@
+/* css는 ai로 만듬 */
+
 * {
     box-sizing: border-box;
 }
@@ -128,12 +130,39 @@ header h1 {
     background-color: #d1d5db;
 }
 
-.ai-summary {
+.explanation {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 20px;
+}
+
+#explanation-button {
+    width: 100%;
+    padding: 14px 16px;
+    border: none;
+    border-radius: 12px;
+    background-color: #111827;
+    color: #ffffff;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+#explanation-button:hover {
+    background-color: #1f2937;
+    transform: translateY(-1px);
+}
+
+#ai-explanation {
+    min-height: 88px;
     margin: 0;
-    padding: 18px;
-    border-radius: 16px;
+    padding: 16px;
+    border-radius: 14px;
     background-color: #f3f4f6;
     color: #374151;
+    font-size: 0.95rem;
     line-height: 1.6;
-    font-size: 0.98rem;
+    white-space: pre-line;
 }

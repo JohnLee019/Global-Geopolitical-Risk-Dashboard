@@ -8,7 +8,7 @@ async function drawGraph(code, metric){
       }
 
       const data = await response.json();
-      const series = data.exchange_rate;
+      const series = data[metric];
       const ctx = document.getElementById('graph');
       const container = document.querySelector('.graph-container');
       const errorEl = container.querySelector('.graph-error');
@@ -48,7 +48,7 @@ async function drawGraph(code, metric){
     // 그래프 상자 삭제
     canvas.style.display = 'none';
     if (errorEl) {
-      errorEl.textContent = `Current country's graph is not available. Please try it again later on.`;
+      errorEl.textContent = `Currently not available. Please try it again later on.`;
     }
     errorEl.style.display ='block'
   }
