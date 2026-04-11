@@ -156,6 +156,7 @@ header h1 {
 }
 
 #ai-explanation {
+    display: none;
     min-height: 88px;
     margin: 0;
     padding: 16px;
@@ -165,4 +166,8 @@ header h1 {
     font-size: 0.95rem;
     line-height: 1.6;
     white-space: pre-line;
+}
+
+#ai-explanation.active {
+  display: block;
 }

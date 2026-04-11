@@ -1,11 +1,6 @@
-def normalize_fx_change(change_pct):
-    ...
-
-def normalize_vix(vix_value):
-    ...
-
-def calculate_risk_score(country_metrics, news_score):
-    ...
-
-def get_risk_level(score):
-    ...
+def risk_calculate(data):
+    exchange = data['series']['exchange_rate']['values']
+    oil = data['series']['oil_price']['values']
+    dollar = data['series']['dollar_index']['values']
+    vix = data['series']['vix']['values']
+    return

@@ -1,10 +1,15 @@
 async function explanation(code){
     try {
         const response = await fetch(`/api/country/${code}/explain`);
-        const data = await response.json()
         const summary = document.getElementById('ai-explanation');
-        summary.textContent = data.summary;
+        if (!response.ok) {
+            throw new Error(`HTTP error: ${response.status}`);
+        }
+
+        const data = await response.json()
+        summary.textContent = data.bullets;
     } catch (error) {
-        summary.textContent = 'Currently now avaliable. Please try it again later on.'
+        const summary = document.getElementById('ai-explanation');
+        summary.textContent = 'Current Economy Explanation is currently now avaliable. Please try it again later on.'
     }
 }
