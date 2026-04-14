@@ -21,7 +21,7 @@
                 <p class="country-name">country name</p> 
                 <button id="back-button">← Back</button>
             </div>
-            <p class="risk">risk</p>
+            <p id="risk">risk</p>
             <!-- 현재 나라에 색깔을 바탕으로 risk level을 알려줌(이거는 container div에 역할과 겹치는 것 같음). 이거는 1 주일 간에 데이터에 변동폭으로 해당 risk 색깔을 다르게 할지 생각 해야 함 -->
             <div class="graph-datas">
                 <!--각 버튼을 누르면 그에 따른 각 나라에 1 주일 간에 해당 데이터를 그래프로 보여주기 => 데이터 갯수는 변경될 수 있음 -->
@@ -45,5 +45,6 @@
     <script src="{{ url_for('static', filename='js/map.js')}}"></script>
     <script src="{{ url_for('static', filename='js/chart.js')}}"></script>
     <script src="{{ url_for('static', filename='js/ai.js')}}"></script>
+    <script src="{{ url_for('static', filename='js/risk.js')}}"></script>
 </body>
 </html>

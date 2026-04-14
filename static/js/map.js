@@ -64,6 +64,7 @@ graphDatas.addEventListener('click', (event)=> {
 
 // 버튼 클릭시 ai explanation 나오게 => gemini 2.5 api 사용 계획이지만, 바뀔 수 있음
 explanationButton.addEventListener('click',()=> {
+  if (!currentCountryCode) return;
   // 버튼 누르면 close 버튼으로 text가 변경되어서 ai explanation을 닫을 수 있는 기능을 추가할 필요가 없을 것 같음
   ai_explanation.classList.add('active');
   explanation(currentCountryCode);

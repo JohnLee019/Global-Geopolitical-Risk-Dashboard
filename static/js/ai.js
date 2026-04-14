@@ -10,6 +10,6 @@ async function explanation(code){
         summary.textContent = data.bullets;
     } catch (error) {
         const summary = document.getElementById('ai-explanation');
-        summary.textContent = 'Current Economy Explanation is currently now avaliable. Please try it again later on.'
+        summary.textContent = 'Current Economy Explanation is currently not available. Please try it again later on.'
     }
 }

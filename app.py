@@ -1,5 +1,6 @@
 from flask import Flask, render_template, jsonify, request, redirect, url_for
-import requests
+from services.risk_score import risk_calculate
+from services.market_data import get_currency_by_country, fetch_exchange_series
 
 app = Flask(__name__)
 
@@ -107,8 +108,18 @@ def index():
 
 @app.route('/api/country/<country_code>/series')
 def country_series(country_code):
-    country_data= DUMMY_COUNTRY_DATA[country_code]['series']
-    return jsonify(country_data)
+    # country_data= DUMMY_COUNTRY_DATA[country_code]
+    new_country_data = get_currency_by_country(country_code)
+    exchange_rate = fetch_exchange_series("USD", new_country_data, "2026-04-08", "2026-04-14")
+    # risk = risk_calculate(country_data)
+    print(exchange_rate)
+    # map = {
+    #     "dates": exchange_rate.date,
+    #     "values": exchange_rate.rate,
+    #     "label": exchange_rate.base
+    # }
+    # return jsonify(series= country_data['series'], risk=risk)
+    return jsonify(series=exchange_rate) 
     ...
 
 @app.route('/api/country/<country_code>/explain')

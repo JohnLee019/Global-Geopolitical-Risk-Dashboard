@@ -1,7 +1,6 @@
 let currentChart = null;
 
 async function drawGraph(code, metric){
-  const ctx = document.getElementById('graph');
   const canvas = document.getElementById('graph');
   const container = document.querySelector('.graph-container');
   const errorEl = container.querySelector('.graph-error');
@@ -30,9 +29,11 @@ async function drawGraph(code, metric){
     if (!response.ok) {
       throw new Error(`HTTP error: ${response.status}`);
     }
-
+    
     const data = await response.json();
-    const series = data[metric];
+    const series = data.series[metric];
+
+    risk_display(data.risk)
 
     // 그래프 상자 다시 생성 
     canvas.style.display = 'block';
@@ -43,7 +44,7 @@ async function drawGraph(code, metric){
       currentChart.destroy();
     }
 
-    currentChart = new Chart(ctx, {
+    currentChart = new Chart(canvas, {
       type: 'line',
       data: {
         labels: series.dates,
@@ -76,5 +77,6 @@ async function drawGraph(code, metric){
       errorEl.textContent = `${metricMap[metric]} is currently not available. Please try it again later on.`;
     }
     errorEl.style.display = 'block';
+    risk_display({risk_level: 'No data'});
   }
 }
