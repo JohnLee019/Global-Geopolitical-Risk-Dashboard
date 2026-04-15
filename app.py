@@ -1,6 +1,7 @@
-from flask import Flask, render_template, jsonify, request, redirect, url_for
+from flask import Flask, render_template, jsonify
 from services.risk_score import risk_calculate
-from services.market_data import get_currency_by_country, fetch_exchange_series
+from services.exchange_data import get_currency_by_country, fetch_exchange_series
+from datetime import date, timedelta
 
 app = Flask(__name__)
 
@@ -100,26 +101,28 @@ DUMMY_COUNTRY_DATA = {
 def index():
     return render_template('index.html')
 
-# @app.route('/api/country/<country_code>')
-# def country_summary(country_code):
-#     country_data = DUMMY_COUNTRY_DATA[country_code]
-#     return jsonify(country_data)
-#     ...
-
 @app.route('/api/country/<country_code>/series')
 def country_series(country_code):
-    # country_data= DUMMY_COUNTRY_DATA[country_code]
-    new_country_data = get_currency_by_country(country_code)
-    exchange_rate = fetch_exchange_series("USD", new_country_data, "2026-04-08", "2026-04-14")
+    new_country_code = get_currency_by_country(country_code)
+    if (new_country_code == "USD"):
+        # 나중에 dollar index api 연결시킨 후에 밑에 exchange_rate = dollar index 형식으로 바꾸기 
+        exchange_rate = None
+    else:
+        today = date.today()
+        
+        last_week = today - timedelta(days=7)
+        exchange_rate = fetch_exchange_series("USD", new_country_code, last_week, today)
     # risk = risk_calculate(country_data)
-    print(exchange_rate)
-    # map = {
-    #     "dates": exchange_rate.date,
-    #     "values": exchange_rate.rate,
-    #     "label": exchange_rate.base
-    # }
-    # return jsonify(series= country_data['series'], risk=risk)
-    return jsonify(series=exchange_rate) 
+    # risk 계산 로직을 pandas를 활용해서 계산으로 바꾸기 
+    risk = {"risk_level": "Unknown"}
+
+    series = {
+        "exchange_rate": exchange_rate,
+        "oil_price": None,
+        "dollar_index": None,
+        "vix": None
+    }
+    return jsonify(series=series, risk=risk) 
     ...
 
 @app.route('/api/country/<country_code>/explain')
