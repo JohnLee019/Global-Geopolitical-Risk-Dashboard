@@ -1,8 +1,8 @@
 def risk_calculate(data):
-    exchange = [e for e in data['series']['exchange_rate']['values'] if e is not None]
-    oil = [o for o in data['series']['oil_price']['values'] if o is not None]
-    dollar = [d for d in data['series']['dollar_index']['values'] if d is not None]
-    vix = [v for v in data['series']['vix']['values'] if v is not None]
+    exchange = [e for e in data['exchange_rate']['values'] if e is not None]
+    oil = [o for o in data['oil_price']['values'] if o is not None]
+    dollar = [d for d in data['dollar_index']['values'] if d is not None]
+    vix = [v for v in data['vix']['values'] if v is not None]
 
     exchange_risk = calculation(exchange, 'exchange_rate')
     oil_risk = calculation(oil, 'oil_price')
