@@ -15,30 +15,50 @@
     </header>
     <div class="container">
         <!-- 기본 나라 상태는 2D 형태에 사진에서 현재 각 나라에 경제 상황에 따라 나라에 색깔이 다르게 나오게 하기 -->
-        <div id="map"></div>
-        <div class="card">
+        <div class="map-wrapper">
+            <div id="map"></div>
+            <button id="open-common-btn" class="floating-common-btn">🌍 Global Common Data</button>
+        </div>
+        <div class="card hidden" id="country-card">
             <div class="card-header">
                 <p class="country-name">country name</p> 
-                <button id="back-button">← Back</button>
+                <button class="close-btn">← Back</button>
             </div>
             <p id="risk">risk</p>
-            <!-- 현재 나라에 색깔을 바탕으로 risk level을 알려줌(이거는 container div에 역할과 겹치는 것 같음). 이거는 1 주일 간에 데이터에 변동폭으로 해당 risk 색깔을 다르게 할지 생각 해야 함 -->
             <div class="graph-datas">
-                <!--각 버튼을 누르면 그에 따른 각 나라에 1 주일 간에 해당 데이터를 그래프로 보여주기 => 데이터 갯수는 변경될 수 있음 -->
                 <button class="exchange-rate">Exchange Rate</button>
-                <button class="oil-price">Oil Price</button>
-                <button class="dollar-index">Dollar Index</button>
-                <button class="vix">VIX</button>
+                <button class="equity-index">Equity Index</button>
+                <button class="government-bond">10 year government bond yield</button>
+                <button class="news-sentiment">News Sentiment Risk Score</button>
             </div>         
-            <!-- 그래프 들어갈 위치 -->
             <div class="graph-container">
                 <canvas id="graph"></canvas>
                 <div class="graph-error"></div>
             </div>
             <div class="explanation">
                 <button id="explanation-button">Current Economy Explanation</button>
-                <!-- 약 3줄 정도에 gemini 2.5가 현재 경제 상황에 따른 주된 이유를 요약 (이거는 직접 검색을 시킬지 아니면 아니면 위에서 주어진 4개의 데이터로 inference 시킬지 고민해야 함) -->
                 <p id="ai-explanation"></p>  
+            </div>
+        </div>
+
+        <div class="card hidden" id="common-data-card">
+            <div class="card-header">
+                <p class="country-name">Gloabl Indicators</p>
+                <button class="close-btn">← Back</button>
+            </div>
+            <div class="common-graphs-wrapper">
+                <div class="graph-item">
+                    <h4>Oil Price (WTI)</h4>
+                    <canvas id="oil-graph"></canvas>
+                </div>
+                <div class="graph-item">
+                    <h4>Dollar Index (DXY)</h4>
+                    <canvas id="dollar-graph"></canvas>
+                </div>
+                <div class="graph-item">
+                    <h4>VIX (Volatility Index)</h4>
+                    <canvas id="vix-graph"></canvas>
+                </div>
             </div>
         </div>
     </div>

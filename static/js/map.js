@@ -1,16 +1,18 @@
 let currentCountryCode = null;
 
 const card = document.querySelector('.card');
-const backButton = document.getElementById('back-button');
+const backButton = document.querySelectorAll('.close-btn');
 const graphDatas = document.querySelector('.graph-datas');
 const explanationButton = document.getElementById('explanation-button');
 const ai_explanation = document.getElementById('ai-explanation');
+const common_data_card = document.getElementById('common-data-card');
+const openCommonButton = document.getElementById('open-common-btn');
 
 const metricMap = {
   'exchange-rate': 'exchange_rate',
-  'oil-price': 'oil_price',
-  'dollar-index': 'dollar_index',
-  'vix': 'vix'
+  'equity-index': 'equity_index',
+  'government-bond': 'government_bond',
+  'news-sentiment': 'news_sentiment'
 };
 
 // 기본적인 지도 불려오기 
@@ -45,9 +47,15 @@ const map = new jsVectorMap({
 });
 
 // 카드 형태 나라 정보 닫기
-backButton.addEventListener('click', ()=>{
-  card.classList.remove('active')
-  resize()
+backButton.forEach((btn)=> {
+  btn.addEventListener('click', (e)=> {
+    const parentCard = e.target.closest('.card');
+
+    if (parentCard) {
+      parentCard.classList.remove('active');
+    }
+    resize();
+  })
 });
 
 // 버튼 별로 다른 그래프 불러오기
@@ -62,12 +70,22 @@ graphDatas.addEventListener('click', (event)=> {
   drawGraph(currentCountryCode, metric);
 });
 
-// 버튼 클릭시 ai explanation 나오게 => gemini 2.5 api 사용 계획이지만, 바뀔 수 있음
+// 버튼 클릭시 ai explanation 나오게 
 explanationButton.addEventListener('click',()=> {
   if (!currentCountryCode) return;
   // 버튼 누르면 close 버튼으로 text가 변경되어서 ai explanation을 닫을 수 있는 기능을 추가할 필요가 없을 것 같음
   ai_explanation.classList.add('active');
   explanation(currentCountryCode);
+  });
+
+  // 버튼 클릭시 global indicators 나오게
+openCommonButton.addEventListener('click', ()=> {
+  // card.classList.remove('active');
+  common_data_card.classList.add('active');
+
+  // 여기에 그래프 나오는 function 추가 
+
+  resize();
 });
 
 function resize(){

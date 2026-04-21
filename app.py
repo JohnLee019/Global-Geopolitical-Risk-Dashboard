@@ -26,7 +26,7 @@ def get_market_data(country_code):
         exchange_rate = dollar_index
     else:
         today = date.today()
-        last_week = today - timedelta(days=7)
+        last_week = today - timedelta(days=30)
         exchange_rate = fetch_exchange_series("USD", new_country_code, last_week, today)
 
     series = {

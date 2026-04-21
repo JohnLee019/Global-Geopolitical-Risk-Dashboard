@@ -12,7 +12,7 @@ def final_data(ticker_data, label, unit):
 
 def fetch_series(ticker_label):
     ticker = yf.Ticker(ticker_label)
-    historical_data = ticker.history(period="7d") 
+    historical_data = ticker.history(period="1mo") 
 
     dates = []
     values = []
