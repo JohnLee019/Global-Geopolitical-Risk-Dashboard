@@ -10,15 +10,15 @@ async function drawGraph(code, metric){
       borderColor: '#2563eb',
       backgroundColor: 'rgba(37, 99, 235, 0.15)'
     },
-    oil_price: {
+    equity_index: {
       borderColor: '#f59e0b',
       backgroundColor: 'rgba(245, 158, 11, 0.15)'
     },
-    dollar_index: {
+    consumer_price: {
       borderColor: '#10b981',
       backgroundColor: 'rgba(16, 185, 129, 0.15)'
     },
-    vix: {
+    news_sentiment: {
       borderColor: '#ef4444',
       backgroundColor: 'rgba(239, 68, 68, 0.15)'
     }
@@ -60,10 +60,10 @@ async function drawGraph(code, metric){
     });
   } catch (error){
     const metricMap = {
-      'exchange_rate': 'Exchange Rate',
-      'oil_price': 'Oil Price',
-      'dollar_index': 'Dollar Index',
-      'vix': 'VIX'
+      'exchange-rate': 'exchange_rate',
+      'equity-index': 'equity_index',
+      'consumer-price': 'consumer_price',
+      'news-sentiment': 'news_sentiment',
     };
 
     if (currentChart) {

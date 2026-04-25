@@ -11,8 +11,8 @@ const openCommonButton = document.getElementById('open-common-btn');
 const metricMap = {
   'exchange-rate': 'exchange_rate',
   'equity-index': 'equity_index',
-  'government-bond': 'government_bond',
-  'news-sentiment': 'news_sentiment'
+  'consumer-price': 'consumer_price',
+  'news-sentiment': 'news_sentiment',
 };
 
 // 기본적인 지도 불려오기 
@@ -80,11 +80,9 @@ explanationButton.addEventListener('click',()=> {
 
   // 버튼 클릭시 global indicators 나오게
 openCommonButton.addEventListener('click', ()=> {
-  // card.classList.remove('active');
   common_data_card.classList.add('active');
 
-  // 여기에 그래프 나오는 function 추가 
-
+  drawGlobalGraph();
   resize();
 });
 
