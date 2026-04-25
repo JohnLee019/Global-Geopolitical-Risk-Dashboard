@@ -1,11 +1,7 @@
 import requests
 
-def normalize_country_code(country_code):
-    return (country_code or "").strip().upper()
-
 def get_currency_by_country(country_code):
-    code = normalize_country_code(country_code)
-    return COUNTRY_TO_CURRENCY.get(code)
+    return COUNTRY_TO_CURRENCY.get(country_code)
 
 def fetch_exchange_series(base_currency, quotes_currency, start, end):
     base_url = "https://api.frankfurter.dev/v2/rates"

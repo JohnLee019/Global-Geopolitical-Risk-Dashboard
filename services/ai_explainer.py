@@ -51,10 +51,5 @@ def generate_explanation(country_name, risk_score, metrics, headlines=None):
 
 def fallback_explanation(country_name, risk_score):
     return {
-        "title": f"Risk analysis temporarily unavailable for {country_name}",
         "summary": f"The current risk score is {risk_score}, but detailed AI analysis could not be loaded at this moment.",
-        "bullets": [
-            "Please check your API key or network connection.",
-            "Try refreshing the page in a few minutes."
-        ]
     }

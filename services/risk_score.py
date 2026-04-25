@@ -1,19 +1,19 @@
 def risk_calculate(data):
     exchange = [e for e in data['exchange_rate']['values'] if e is not None]
-    oil = [o for o in data['oil_price']['values'] if o is not None]
-    dollar = [d for d in data['dollar_index']['values'] if d is not None]
-    vix = [v for v in data['vix']['values'] if v is not None]
+    equity_index = [eq for eq in data['equity_index']['values'] if eq is not None]
+    consumer_price = [cp for cp in data['consumer_price']['values'] if cp is not None]
+    news_sentiment = [ns for ns in data['news_sentiment']['values'] if ns is not None]
 
     exchange_risk = calculation(exchange, 'exchange_rate')
-    oil_risk = calculation(oil, 'oil_price')
-    dollar_risk = calculation(dollar, 'dollar_index')
-    vix_risk = calculation(vix, 'vix')
+    equity_index_risk = calculation(equity_index, 'equity_index')
+    consumer_price_risk = calculation(consumer_price, 'consumer_price')
+    news_sentiment_risk = calculation(news_sentiment, 'news_sentiment')
 
     final_score = (
         exchange_risk * 0.30 +
-        oil_risk * 0.15 +
-        dollar_risk * 0.25 +
-        vix_risk * 0.30
+        equity_index_risk * 0.15 +
+        consumer_price_risk * 0.25 +
+        news_sentiment_risk * 0.30
     )
 
     # 0보다 작아지지 않게 하고, 100보다 커지지 않게
@@ -49,14 +49,14 @@ def calculation(values, indicator):
     if indicator == 'exchange_rate':
         return exchange_score(change_pct)
 
-    elif indicator == 'oil_price':
-        return oil_score(change_pct)
+    elif indicator == 'equity_index':
+        return equity_index_score(change_pct)
 
-    elif indicator == 'dollar_index':
-        return dollar_score(change_pct)
+    elif indicator == 'consumer_price':
+        return consumer_price_score(change_pct)
 
-    elif indicator == 'vix':
-        return vix_score(change_pct)
+    elif indicator == 'news_sentiment':
+        return news_sentiment_score(change_pct)
 
     return 0
 
@@ -77,8 +77,8 @@ def exchange_score(change_pct):
         return 100
 
 
-def dollar_score(change_pct):
-    # 달러 인덱스 상승 = 글로벌 긴장/유동성 압박
+def consumer_price_score(change_pct):
+    # 소비자 물가(금리) 관련 리스크 평가
     if change_pct <= -3:
         return 0
     elif change_pct < 0:
@@ -93,8 +93,8 @@ def dollar_score(change_pct):
         return 100
 
 
-def vix_score(change_pct):
-    # VIX 상승은 가장 민감하게 반영
+def news_sentiment_score(change_pct):
+    # 뉴스 센티먼트 리스크 평가 (민감하게 반영)
     if change_pct <= -10:
         return 0
     elif change_pct < 0:
@@ -109,8 +109,8 @@ def vix_score(change_pct):
         return 100
 
 
-def oil_score(change_pct):
-    # 유가는 급등이 위험, 급락도 경기침체 신호일 수 있어 약한 위험 부여
+def equity_index_score(change_pct):
+    # 주가지수 관련 리스크 평가
     if change_pct <= -10:
         return 20
     elif change_pct < -3:
