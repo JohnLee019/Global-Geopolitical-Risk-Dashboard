@@ -12,17 +12,17 @@ genai.configure(api_key=GEMINI_API_KEY)
 
 def build_prompt(country_name, risk_score, metrics, headlines=None):
     prompt = f"""
-    당신은 글로벌 거시경제 및 금융 리스크 분석 전문가입니다.
-    다음 제공된 데이터를 바탕으로 {country_name}의 현재 경제 리스크 상황을 분석해 주세요.
+    You are an expert in global macroeconomic and financial risk analysis.
+    Please analyze the current economic risk situation for {country_name} based on the provided data.
     
-    [데이터]
-    - 국가명: {country_name}
-    - 종합 리스크 점수: {risk_score} / 100
-    - 주요 지표 현황(환율, 유가, 달러인덱스, VIX): {metrics}
+    [Data]
+    - Country: {country_name}
+    - Overall Risk Score: {risk_score} / 100
+    - Key Indicators (exchange rate, equity index, consumer price index, 10-year bond yield): {metrics}
     
-    반드시 아래의 JSON 포맷으로만 응답해 주세요. 다른 설명이나 마크다운 백틱(```)은 추가하지 마세요.
+    Respond STRICTLY in JSON format as shown below. Do not include any markdown formatting like ```json, and do not add any conversational text.
     {{
-        "summary": "현재 지표들을 바탕으로 현재 경제상황이 의미하는 바에 대한 2~3문장 영문 요약"
+        "summary": "Write a concise 2-3 sentence English summary explaining what the current macroeconomic situation implies based on the provided indicators."
     }}
     """
     return prompt
@@ -33,7 +33,7 @@ def generate_explanation(country_name, risk_score, metrics, headlines=None):
         
         prompt = build_prompt(country_name, risk_score, metrics, headlines)
         
-        # temperature는 그냥 최대한 사실적인 정보를 받고 싶어서 0.1로 했지만 나중에 수정 고려
+        # temperature는 0.1로 유지하여 가장 확률이 높고 일관된 분석 결과를 얻도록 설정
         response = model.generate_content(
             prompt,
             generation_config=genai.types.GenerationConfig(

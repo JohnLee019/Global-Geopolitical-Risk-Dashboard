@@ -1,14 +1,16 @@
 import yfinance as yf
 
 def equity_data(country_code, label, start, end):  
-    ticker_symbol, unit = COUNTRY_TO_EQUITY.get(country_code)
+    ticker_symbol, unit = COUNTRY_TO_EQUITY.get(country_code, (None, None))
+    
     if not ticker_symbol:
-        return None, None
+        return None
     
     ticker = yf.Ticker(ticker_symbol)
     historical_data = ticker.history(start=start, end=end)
+    
     if historical_data.empty:        
-        return None, None
+        return None
     
     dates = []
     values = []

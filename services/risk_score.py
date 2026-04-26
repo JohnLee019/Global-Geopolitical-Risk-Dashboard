@@ -1,22 +1,23 @@
+import numpy as np
+
 def risk_calculate(data):
-    exchange = [e for e in data['exchange_rate']['values'] if e is not None]
-    equity_index = [eq for eq in data['equity_index']['values'] if eq is not None]
-    consumer_price = [cp for cp in data['consumer_price']['values'] if cp is not None]
-    news_sentiment = [ns for ns in data['news_sentiment']['values'] if ns is not None]
+    exchange = [e for e in (data.get('exchange_rate') or {}).get('values', []) if e is not None]
+    equity_index = [eq for eq in (data.get('equity_index') or {}).get('values', []) if eq is not None]
+    consumer_price = [cp for cp in (data.get('consumer_price') or {}).get('values', []) if cp is not None]
+    bond_yield = [by for by in (data.get('bond_yield') or {}).get('values', []) if by is not None]
 
     exchange_risk = calculation(exchange, 'exchange_rate')
     equity_index_risk = calculation(equity_index, 'equity_index')
     consumer_price_risk = calculation(consumer_price, 'consumer_price')
-    news_sentiment_risk = calculation(news_sentiment, 'news_sentiment')
+    bond_yield_risk = calculation(bond_yield, 'bond_yield')
 
     final_score = (
-        exchange_risk * 0.30 +
-        equity_index_risk * 0.15 +
+        exchange_risk * 0.25 +
+        equity_index_risk * 0.25 +
         consumer_price_risk * 0.25 +
-        news_sentiment_risk * 0.30
+        bond_yield_risk * 0.25
     )
 
-    # 0보다 작아지지 않게 하고, 100보다 커지지 않게
     final_score = max(0, min(final_score, 100))
 
     if final_score < 25:
@@ -33,93 +34,114 @@ def risk_calculate(data):
         "risk_level": risk_level
     }
 
-
 def calculation(values, indicator):
+    # 비교할 데이터가 2개 미만인 경우 리스크를 0으로 반환
     if len(values) < 2:
         return 0
 
-    first = values[0]
-    last = values[-1]
+    arr_values = np.array(values)
+    mean = np.mean(arr_values)
+    std = np.std(arr_values)
+    
+    first = arr_values[0]
+    last = arr_values[-1]
+    
+    # 1. Z-Score (표준점수) 산출: 현재 값이 과거 평균에서 얼마나 벗어났는가?
+    if std == 0:
+        z_score = 0
+    else:
+        z_score = (last - mean) / std
 
-    if first == 0:
-        return 0
+    # 2. 단순 등락률 (기간 전체 기준)
+    change_pct = ((last - first) / first) * 100 if first != 0 else 0
+    
+    # 3. 단기 변동성 (Volatility): 기간 내 변화율의 표준편차
+    diffs = np.diff(arr_values)
+    # 0으로 나누는 오류(ZeroDivisionError) 방지
+    safe_arr_values = np.where(arr_values[:-1] == 0, 1e-9, arr_values[:-1]) 
+    pct_changes = (diffs / safe_arr_values) * 100
+    volatility = np.std(pct_changes) if len(pct_changes) > 0 else 0
 
-    change_pct = ((last - first) / first) * 100
-
+    # 지표 성격에 맞는 점수화 함수 호출
     if indicator == 'exchange_rate':
-        return exchange_score(change_pct)
-
+        return exchange_score(z_score, volatility)
     elif indicator == 'equity_index':
-        return equity_index_score(change_pct)
-
+        return equity_index_score(z_score, change_pct, volatility)
     elif indicator == 'consumer_price':
-        return consumer_price_score(change_pct)
-
-    elif indicator == 'news_sentiment':
-        return news_sentiment_score(change_pct)
+        return consumer_price_score(z_score)
+    elif indicator == 'bond_yield':
+        # 국채 금리는 절대적 차이(bp 개념)도 유의미하므로 넘겨줌
+        yield_diff = last - first 
+        return bond_yield_score(z_score, yield_diff, volatility)
 
     return 0
 
+def exchange_score(z_score, volatility):
+    # [환율] 방향성(상승/하락)보다는 급격한 변동(양방향) 자체를 글로벌 리스크로 간주
+    abs_z = abs(z_score)
+    
+    if abs_z < 0.5:
+        base_score = 10
+    elif abs_z < 1.0:
+        base_score = 30
+    elif abs_z < 2.0:
+        base_score = 60
+    elif abs_z < 3.0:
+        base_score = 85
+    else:
+        base_score = 100
+        
+    # 변동성(널뛰기 장세)이 심할 경우 리스크 점수 가산
+    risk = base_score + (volatility * 2)
+    return min(max(risk, 0), 100)
 
-def exchange_score(change_pct):
-    # USD/KRW 기준: 상승 = 원화 약세 = 위험 증가
-    if change_pct <= -5:
-        return 0
-    elif change_pct < 0:
-        return 10
-    elif change_pct < 2:
-        return 30
-    elif change_pct < 5:
-        return 60
-    elif change_pct < 10:
-        return 80
+def equity_index_score(z_score, change_pct, volatility):
+    # [주가지수] 큰 폭의 하락(마이너스 등락률 및 Z-score)과 높은 변동성을 리스크로 간주
+    if z_score > 1.0 or change_pct > 5:
+        base_score = 10   # 호황 (안전)
+    elif z_score > 0 or change_pct > 0:
+        base_score = 30   # 강보합
+    elif z_score > -1.0 or change_pct > -5:
+        base_score = 50   # 약보합 및 조정장
+    elif z_score > -2.0 or change_pct > -10:
+        base_score = 75   # 하락장 (위험)
+    else:
+        base_score = 90   # 폭락장 (고위험)
+        
+    # 하락장에 극심한 변동성이 동반될 경우 리스크 추가
+    risk = base_score + volatility
+    return min(max(risk, 0), 100)
+
+def consumer_price_score(z_score):
+    # [소비자 물가] 인플레이션(급등)과 디플레이션(급락) 양방향 모두 경제 위험 (절댓값 평가)
+    abs_z = abs(z_score)
+    
+    if abs_z < 0.5:
+        return 15
+    elif abs_z < 1.0:
+        return 35
+    elif abs_z < 2.0:
+        return 65
+    elif abs_z < 3.0:
+        return 85
     else:
         return 100
 
-
-def consumer_price_score(change_pct):
-    # 소비자 물가(금리) 관련 리스크 평가
-    if change_pct <= -3:
-        return 0
-    elif change_pct < 0:
-        return 10
-    elif change_pct < 2:
-        return 25
-    elif change_pct < 5:
-        return 50
-    elif change_pct < 10:
-        return 75
+def bond_yield_score(z_score, yield_diff, volatility):
+    # [국채 금리] Z-score 기반의 급등락 및 절대적인 bp 변동성 모두 리스크 요인으로 반영
+    abs_z = abs(z_score)
+    abs_diff = abs(yield_diff)
+    
+    if abs_z < 0.5 and abs_diff < 0.2:
+        base_score = 15
+    elif abs_z < 1.0 and abs_diff < 0.5:
+        base_score = 40
+    elif abs_z < 2.0:
+        base_score = 70
+    elif abs_z < 3.0:
+        base_score = 85
     else:
-        return 100
-
-
-def news_sentiment_score(change_pct):
-    # 뉴스 센티먼트 리스크 평가 (민감하게 반영)
-    if change_pct <= -10:
-        return 0
-    elif change_pct < 0:
-        return 5
-    elif change_pct < 5:
-        return 30
-    elif change_pct < 10:
-        return 55
-    elif change_pct < 20:
-        return 80
-    else:
-        return 100
-
-
-def equity_index_score(change_pct):
-    # 주가지수 관련 리스크 평가
-    if change_pct <= -10:
-        return 20
-    elif change_pct < -3:
-        return 10
-    elif change_pct < 3:
-        return 20
-    elif change_pct < 7:
-        return 45
-    elif change_pct < 15:
-        return 70
-    else:
-        return 90
+        base_score = 100
+        
+    risk = base_score + (volatility * 1.5)
+    return min(max(risk, 0), 100)

@@ -39,8 +39,8 @@ def get_market_data(country_code):
         'bond_yield': bond_yield,
     }
     
-    # risk = risk_calculate(series)
-    risk = {"risk_level": "None"}
+    risk = risk_calculate(series)
+    # risk = {"risk_level": "None"}
     return series, risk, new_country_code
 
 @app.route('/', methods=['GET'])
