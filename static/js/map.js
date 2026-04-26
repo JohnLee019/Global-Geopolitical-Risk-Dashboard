@@ -12,7 +12,7 @@ const metricMap = {
   'exchange-rate': 'exchange_rate',
   'equity-index': 'equity_index',
   'consumer-price': 'consumer_price',
-  'news-sentiment': 'news_sentiment',
+  'bond-yield': 'bond_yield',
 };
 
 // 기본적인 지도 불려오기 
@@ -29,6 +29,16 @@ const map = new jsVectorMap({
     ai_explanation.textContent = '';
 
     countryName.textContent = regionNames.of(code);
+
+    // 미국만 exchaneg rate button이 dollar index로 바꾸기 왜냐하면 환율을 미국 달러 기준으로 바꾸기 때문에 미국은 환율 적용을 못함
+    const btn = document.querySelector('.exchange-rate');
+    if (code === "US"){
+      btn.textContent = "Dollar Index";
+    }
+    else{
+      btn.textContent = "Exchange Rate";
+    }
+
     // 카드 형태의 나라 정보 띄우기
     card.classList.add('active');
 

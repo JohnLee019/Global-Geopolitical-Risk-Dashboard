@@ -5,7 +5,8 @@ from dotenv import load_dotenv
 load_dotenv()
 FRED_API_KEY = os.getenv("FRED_API_KEY")
 fred = Fred(api_key=FRED_API_KEY)
-def get_cosumer_price(country_code, label, start_date):
+
+def get_bond_yield(country_code, label, start_date):
     series_id = COUNTRY_TO_INTEREST_RATE.get(country_code)
     
     if not series_id:
@@ -27,7 +28,7 @@ def get_cosumer_price(country_code, label, start_date):
         
         series = {
         "label": label,
-        "unit": "CPI",
+        "unit": "GBY",
         "dates": dates,
         "values": values
         }
@@ -37,9 +38,8 @@ def get_cosumer_price(country_code, label, start_date):
     except Exception as e:
         print(f"FRED API 호출 에러: {e}")
         return None
-    
-# 기준금리 (Interest Rate) FRED 시리즈 ID 매핑
-# 주요국은 단기/기준금리 시리즈 ID를 매핑, 지원하지 않는 국가는 None으로 처리
+
+# 10년물 국채 금리 (10-Year Government Bond Yield) FRED 시리즈 ID 매핑
 COUNTRY_TO_INTEREST_RATE = {
     "AF": None,           # Afghanistan
     "AX": None,           # Aland Islands
@@ -50,11 +50,11 @@ COUNTRY_TO_INTEREST_RATE = {
     "AO": None,           # Angola
     "AI": None,           # Anguilla
     "AG": None,           # Antigua and Barbuda
-    "AR": "INTDSRARM193N",# Argentina
+    "AR": None,           # Argentina (10년물 제공 안됨)
     "AM": None,           # Armenia
     "AW": None,           # Aruba
-    "AU": "INTDSRAUM193N",# Australia
-    "AT": "ECBDFR",       # Austria (Eurozone)
+    "AU": "IRLTLT01AUM156N", # Australia
+    "AT": "IRLTLT01ATM156N", # Austria 
     "AZ": None,           # Azerbaijan
     "BS": None,           # Bahamas
     "BH": None,           # Bahrain
@@ -62,7 +62,7 @@ COUNTRY_TO_INTEREST_RATE = {
     "BD": None,           # Bangladesh
     "BB": None,           # Barbados
     "BY": None,           # Belarus
-    "BE": "ECBDFR",       # Belgium (Eurozone)
+    "BE": "IRLTLT01BEM156N", # Belgium 
     "BZ": None,           # Belize
     "BJ": None,           # Benin
     "BM": None,           # Bermuda
@@ -72,7 +72,7 @@ COUNTRY_TO_INTEREST_RATE = {
     "BA": None,           # Bosnia and Herzegovina
     "BW": None,           # Botswana
     "BV": None,           # Bouvet Island
-    "BR": "INTDSRBRM193N",# Brazil
+    "BR": None,           # Brazil
     "IO": None,           # British Indian Ocean Territory
     "VG": None,           # British Virgin Islands
     "BN": None,           # Brunei Darussalam
@@ -81,27 +81,27 @@ COUNTRY_TO_INTEREST_RATE = {
     "BI": None,           # Burundi
     "KH": None,           # Cambodia
     "CM": None,           # Cameroon
-    "CA": "CANCPIALLMINMEI",# Canada
+    "CA": "IRLTLT01CAM156N", # Canada
     "CV": None,           # Cape Verde
     "KY": None,           # Cayman Islands
     "CF": None,           # Central African Republic
     "TD": None,           # Chad
-    "CL": "INTDSRCLM193N",# Chile
-    "CN": "INTDSRCNM193N",# China
+    "CL": "IRLTLT01CLM156N", # Chile
+    "CN": None,           # China (FRED에서 공식 10년물 미제공)
     "CX": None,           # Christmas Island
     "CC": None,           # Cocos (Keeling) Islands
-    "CO": "INTDSRCOM193N",# Colombia
+    "CO": "IRLTLT01COM156N", # Colombia
     "KM": None,           # Comoros
     "CK": None,           # Cook Islands
-    "CR": None,           # Costa Rica
+    "CR": "IRLTLT01CRM156N", # Costa Rica
     "HR": None,           # Croatia
     "CU": None,           # Cuba
     "CW": None,           # Curaçao
-    "CY": "ECBDFR",       # Cyprus (Eurozone)
-    "CZ": "INTDSRCZM193N",# Czechia
+    "CY": None,           # Cyprus
+    "CZ": "IRLTLT01CZM156N", # Czechia
     "CI": None,           # Côte d'Ivoire
     "CD": None,           # Democratic Republic of Congo
-    "DK": "INTDSRDKM193N",# Denmark
+    "DK": "IRLTLT01DKM156N", # Denmark
     "DJ": None,           # Djibouti
     "DM": None,           # Dominica
     "DO": None,           # Dominican Republic
@@ -110,25 +110,25 @@ COUNTRY_TO_INTEREST_RATE = {
     "SV": None,           # El Salvador
     "GQ": None,           # Equatorial Guinea
     "ER": None,           # Eritrea
-    "EE": "ECBDFR",       # Estonia (Eurozone)
+    "EE": "IRLTLT01EEM156N", # Estonia 
     "ET": None,           # Ethiopia
     "FK": None,           # Falkland Islands
     "FO": None,           # Faroe Islands
     "FM": None,           # Federated States of Micronesia
     "FJ": None,           # Fiji
-    "FI": "ECBDFR",       # Finland (Eurozone)
-    "FR": "ECBDFR",       # France (Eurozone)
+    "FI": "IRLTLT01FIM156N", # Finland 
+    "FR": "IRLTLT01FRM156N", # France 
     "GF": None,           # French Guiana
     "PF": None,           # French Polynesia
     "TF": None,           # French Southern and Antarctic Lands
     "GA": None,           # Gabon
     "GM": None,           # Gambia
     "GE": None,           # Georgia
-    "DE": "ECBDFR",       # Germany (Eurozone)
+    "DE": "IRLTLT01DEM156N", # Germany 
     "GH": None,           # Ghana
     "GI": None,           # Gibraltar
     "GO": None,           # Glorioso Islands
-    "GR": "ECBDFR",       # Greece (Eurozone)
+    "GR": "IRLTLT01GRM156N", # Greece 
     "GL": None,           # Greenland
     "GD": None,           # Grenada
     "GP": None,           # Guadeloupe
@@ -143,18 +143,18 @@ COUNTRY_TO_INTEREST_RATE = {
     "HN": None,           # Honduras
     "HK": None,           # Hong Kong
     "UM-HQ": None,        # Howland Island
-    "HU": "INTDSRHUM193N",# Hungary
-    "IS": None,           # Iceland
-    "IN": "INTDSRINM193N",# India
-    "ID": "INTDSRIDM193N",# Indonesia
+    "HU": "IRLTLT01HUM156N", # Hungary
+    "IS": "IRLTLT01ISM156N", # Iceland
+    "IN": "IRLTLT01INM156N", # India
+    "ID": "IRLTLT01IDM156N", # Indonesia
     "IR": None,           # Iran
     "IQ": None,           # Iraq
-    "IE": "ECBDFR",       # Ireland (Eurozone)
+    "IE": "IRLTLT01IEM156N", # Ireland 
     "IM": None,           # Isle of Man
-    "IL": "INTDSRILM193N",# Israel
-    "IT": "ECBDFR",       # Italy (Eurozone)
+    "IL": "IRLTLT01ILM156N", # Israel
+    "IT": "IRLTLT01ITM156N", # Italy 
     "JM": None,           # Jamaica
-    "JP": "INTDSRJPM193N",# Japan
+    "JP": "IRLTLT01JPM156N", # Japan
     "UM-DQ": None,        # Jarvis Island
     "JE": None,           # Jersey
     "UM-JQ": None,        # Johnston Atoll
@@ -167,28 +167,28 @@ COUNTRY_TO_INTEREST_RATE = {
     "KW": None,           # Kuwait
     "KG": None,           # Kyrgyzstan
     "LA": None,           # Lao People's Democratic Republic
-    "LV": "ECBDFR",       # Latvia (Eurozone)
+    "LV": "IRLTLT01LVM156N", # Latvia 
     "LB": None,           # Lebanon
     "LS": None,           # Lesotho
     "LR": None,           # Liberia
     "LY": None,           # Libya
     "LI": None,           # Liechtenstein
-    "LT": "ECBDFR",       # Lithuania (Eurozone)
-    "LU": "ECBDFR",       # Luxembourg (Eurozone)
+    "LT": "IRLTLT01LTM156N", # Lithuania 
+    "LU": "IRLTLT01LUM156N", # Luxembourg 
     "MO": None,           # Macau
     "MK": None,           # Macedonia
     "MG": None,           # Madagascar
     "MW": None,           # Malawi
-    "MY": "INTDSRMYM193N",# Malaysia
+    "MY": None,           # Malaysia
     "MV": None,           # Maldives
     "ML": None,           # Mali
-    "MT": "ECBDFR",       # Malta (Eurozone)
+    "MT": None,           # Malta
     "MH": None,           # Marshall Islands
     "MQ": None,           # Martinique
     "MR": None,           # Mauritania
     "MU": None,           # Mauritius
     "YT": None,           # Mayotte
-    "MX": "INTDSRMXM193N",# Mexico
+    "MX": "IRLTLT01MXM156N", # Mexico
     "UM-MQ": None,        # Midway Islands
     "MD": None,           # Moldova
     "MC": None,           # Monaco
@@ -201,9 +201,9 @@ COUNTRY_TO_INTEREST_RATE = {
     "NA": None,           # Namibia
     "NR": None,           # Nauru
     "NP": None,           # Nepal
-    "NL": "ECBDFR",       # Netherlands (Eurozone)
+    "NL": "IRLTLT01NLM156N", # Netherlands 
     "NC": None,           # New Caledonia
-    "NZ": "INTDSRNZM193N",# New Zealand
+    "NZ": "IRLTLT01NZM156N", # New Zealand
     "NI": None,           # Nicaragua
     "NE": None,           # Niger
     "NG": None,           # Nigeria
@@ -211,7 +211,7 @@ COUNTRY_TO_INTEREST_RATE = {
     "NF": None,           # Norfolk Island
     "KP": None,           # North Korea
     "MP": None,           # Northern Mariana Islands
-    "NO": "INTDSRNOM193N",# Norway
+    "NO": "IRLTLT01NOM156N", # Norway
     "OM": None,           # Oman
     "PK": None,           # Pakistan
     "PW": None,           # Palau
@@ -219,17 +219,17 @@ COUNTRY_TO_INTEREST_RATE = {
     "PA": None,           # Panama
     "PG": None,           # Papua New Guinea
     "PY": None,           # Paraguay
-    "PE": "INTDSRPEM193N",# Peru
-    "PH": "INTDSRPHM193N",# Philippines
+    "PE": None,           # Peru
+    "PH": None,           # Philippines
     "PN": None,           # Pitcairn Islands
-    "PL": "INTDSRPLM193N",# Poland
-    "PT": "ECBDFR",       # Portugal (Eurozone)
+    "PL": "IRLTLT01PLM156N", # Poland
+    "PT": "IRLTLT01PTM156N", # Portugal 
     "PR": None,           # Puerto Rico
     "QA": None,           # Qatar
     "CG": None,           # Republic of Congo
     "RE": None,           # Reunion
     "RO": None,           # Romania
-    "RU": "INTDSRRUM193N",# Russia
+    "RU": "IRLTLT01RUM156N", # Russia
     "RW": None,           # Rwanda
     "BL": None,           # Saint Barthelemy
     "SH": None,           # Saint Helena
@@ -241,40 +241,40 @@ COUNTRY_TO_INTEREST_RATE = {
     "WS": None,           # Samoa
     "SM": None,           # San Marino
     "ST": None,           # Sao Tome and Principe
-    "SA": "INTDSRSAM193N",# Saudi Arabia
+    "SA": None,           # Saudi Arabia
     "SN": None,           # Senegal
     "RS": None,           # Serbia
     "SC": None,           # Seychelles
     "SL": None,           # Sierra Leone
-    "SG": "INTDSRSGM193N",# Singapore
+    "SG": None,           # Singapore
     "SX": None,           # Sint Maarten
-    "SK": "ECBDFR",       # Slovakia (Eurozone)
-    "SI": "ECBDFR",       # Slovenia (Eurozone)
+    "SK": "IRLTLT01SKM156N", # Slovakia 
+    "SI": "IRLTLT01SIM156N", # Slovenia 
     "SB": None,           # Solomon Islands
     "SO": None,           # Somalia
-    "ZA": "INTDSRZAM193N",# South Africa
+    "ZA": "IRLTLT01ZAM156N", # South Africa
     "GS": None,           # South Georgia and South Sandwich Islands
-    "KR": "INTDSRKRM193N",# South Korea
+    "KR": "IRLTLT01KRM156N", # South Korea
     "SS": None,           # South Sudan
-    "ES": "ECBDFR",       # Spain (Eurozone)
+    "ES": "IRLTLT01ESM156N", # Spain 
     "LK": None,           # Sri Lanka
     "SD": None,           # Sudan
     "SR": None,           # Suriname
     "SJ": None,           # Svalbard and Jan Mayen
-    "SE": "INTDSRSEM193N",# Sweden
-    "CH": "INTDSRCHM193N",# Switzerland
+    "SE": "IRLTLT01SEM156N", # Sweden
+    "CH": "IRLTLT01CHM156N", # Switzerland
     "SY": None,           # Syria
     "TW": None,           # Taiwan
     "TJ": None,           # Tajikistan
     "TZ": None,           # Tanzania
-    "TH": "INTDSRTHM193N",# Thailand
+    "TH": None,           # Thailand
     "TL": None,           # Timor-Leste
     "TG": None,           # Togo
     "TK": None,           # Tokelau
     "TO": None,           # Tonga
     "TT": None,           # Trinidad and Tobago
     "TN": None,           # Tunisia
-    "TR": "INTDSRTRM193N",# Turkey
+    "TR": "IRLTLT01TRM156N", # Turkey
     "TM": None,           # Turkmenistan
     "TC": None,           # Turks and Caicos Islands
     "TV": None,           # Tuvalu
@@ -282,8 +282,8 @@ COUNTRY_TO_INTEREST_RATE = {
     "UG": None,           # Uganda
     "UA": None,           # Ukraine
     "AE": None,           # United Arab Emirates
-    "GB": "INTDSRGBM193N",# United Kingdom
-    "US": "FEDFUNDS",     # United States (Federal Funds Rate)
+    "GB": "IRLTLT01GBM156N", # United Kingdom
+    "US": "DGS10",        # United States (10-Year Treasury Constant Maturity)
     "UY": None,           # Uruguay
     "UZ": None,           # Uzbekistan
     "VU": None,           # Vanuatu

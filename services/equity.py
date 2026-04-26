@@ -24,7 +24,6 @@ def equity_data(country_code, label, start, end):
     }
     return series
 
-
 # 값이 존재하는 나라들과 안정적으로 가져올 수 있는 나라들만 
 # 주식 시장이 없는 것돌도 상당수, 그리고 yfinance에서 무료로 가져올 수 없는 나라도 None
 COUNTRY_TO_EQUITY = {

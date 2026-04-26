@@ -5,6 +5,7 @@ from services.exchange_data import get_currency_by_country, fetch_exchange_serie
 from services.common_data import final_data
 from services.equity import equity_data
 from services.consumer_price import get_cosumer_price
+from services.bond_yield import get_bond_yield
 from services.ai_explainer import generate_explanation
 from datetime import date, timedelta
 
@@ -30,11 +31,12 @@ def get_market_data(country_code):
 
     equity_index = equity_data(country_code, "Equity index" ,last_month, today)
     consumer_price = get_cosumer_price(country_code, "Consumer Price Index" ,year)
+    bond_yield = get_bond_yield(country_code, "10-Year Government Bond Yield", year)
     series = {
         "exchange_rate": exchange_rate,
         'equity_index': equity_index,
         'consumer_price': consumer_price,
-        'news_sentiment': None,
+        'bond_yield': bond_yield,
     }
     
     # risk = risk_calculate(series)

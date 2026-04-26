@@ -18,7 +18,7 @@ async function drawGraph(code, metric){
       borderColor: '#10b981',
       backgroundColor: 'rgba(16, 185, 129, 0.15)'
     },
-    news_sentiment: {
+    bond_yield: {
       borderColor: '#ef4444',
       backgroundColor: 'rgba(239, 68, 68, 0.15)'
     }
@@ -32,6 +32,11 @@ async function drawGraph(code, metric){
     
     const data = await response.json();
     const series = data.series[metric];
+
+    // None 값이면 그냥 바로 Catch error 쪽으로
+    if (!series) {
+      throw new Error("Current country data is not available");
+    }
 
     risk_display(data.risk)
 
@@ -60,10 +65,10 @@ async function drawGraph(code, metric){
     });
   } catch (error){
     const metricMap = {
-      'exchange-rate': 'exchange_rate',
-      'equity-index': 'equity_index',
-      'consumer-price': 'consumer_price',
-      'news-sentiment': 'news_sentiment',
+      'exchange_rate': 'Exchange Rate',
+      'equity_index': 'Equity Index',
+      'consumer_price': 'Consumer Price Index',
+      'bond_yield': '10-Year Bond Yield'
     };
 
     if (currentChart) {
