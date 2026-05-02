@@ -2,7 +2,7 @@
 
 A web-based dashboard designed to analyze, quantify, and visualize macroeconomic risks for countries worldwide. The application features an interactive world map that provides users with real-time financial data, a calculated risk score, and AI-generated summaries of a country's current economic situation.
 
-<img width="2434" height="1247" alt="image_of_the_website" src="https://github.com/user-attachments/assets/7c2794f1-edcf-4f17-8f7d-c4f6cf1690ba" />
+<img width="2372" height="1305" alt="image of the website" src="https://github.com/user-attachments/assets/f0e72be0-077a-430e-bd40-12d9c7f16abd" />
 
 ## Features
 
