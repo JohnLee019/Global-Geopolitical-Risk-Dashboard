@@ -61,6 +61,23 @@ async function drawGraph(code, metric){
           borderColor: styleMap[metric]['borderColor'],
           backgroundColor: styleMap[metric]['backgroundColor']
         }]
+      },
+      options: {
+        scales: {
+          x: {
+            ticks: { color: '#cbd5e1' }, // x축 글씨 색상 밝게
+            grid: { color: 'rgba(255, 255, 255, 0.1)' } // x축 배경 선 색상 연하게
+          },
+          y: {
+            ticks: { color: '#cbd5e1' }, // y축 글씨 색상 밝게
+            grid: { color: 'rgba(255, 255, 255, 0.1)' } // y축 배경 선 색상 연하게
+          }
+        },
+        plugins: {
+          legend: {
+            labels: { color: '#e2e8f0' } // 상단 데이터 라벨(범례) 글씨 색상 밝게
+          }
+        }
       }
     });
   } catch (error){

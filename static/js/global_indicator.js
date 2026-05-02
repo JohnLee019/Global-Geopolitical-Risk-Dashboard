@@ -17,6 +17,24 @@ async function drawGlobalGraph() {
         const dollarData = data.dollar_index;
         const vixData = data.vix;
 
+        const darkThemeOptions = {
+            scales: {
+                x: {
+                    ticks: { color: '#cbd5e1' },
+                    grid: { color: 'rgba(255, 255, 255, 0.1)' }
+                },
+                y: {
+                    ticks: { color: '#cbd5e1' },
+                    grid: { color: 'rgba(255, 255, 255, 0.1)' }
+                }
+            },
+            plugins: {
+                legend: {
+                    labels: { color: '#e2e8f0' }
+                }
+            }
+        };
+
         new Chart(document.getElementById('oil-graph'), {
             type: 'line',
             data: {
