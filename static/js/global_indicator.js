@@ -35,50 +35,34 @@ async function drawGlobalGraph() {
             }
         };
 
-        new Chart(document.getElementById('oil-graph'), {
-            type: 'line',
-            data: {
-                labels: oilData.dates,
-                datasets: [{
-                    label: oilData.label,
-                    data: oilData.values,
-                    borderColor: '#f59e0b',
-                    backgroundColor: 'rgba(245, 158, 11, 0.15)',
-                    fill: false,
-                    tension: 0.1
-                }]
-            }
-        });
+         // 반복 줄이기 위해 헬퍼 함수로 정리
+        const renderChart = (canvasId, seriesData, color) => {
+            const canvas = document.getElementById(canvasId);
+            if (!canvas || !seriesData) return;
 
-        new Chart(document.getElementById('dollar-graph'), {
-            type: 'line',
-            data: {
-                labels: dollarData.dates,
-                datasets: [{
-                    label: dollarData.label,
-                    data: dollarData.values,
-                    borderColor: '#10b981',
-                    backgroundColor: 'rgba(16, 185, 129, 0.15)',
-                    fill: false,
-                    tension: 0.1
-                }]
-            }
-        });
+            new Chart(canvas, {
+                type: 'line',
+                data: {
+                    labels: seriesData.dates,
+                    datasets: [{
+                        label: seriesData.label,
+                        data: seriesData.values,
+                        borderColor: color.border,
+                        backgroundColor: color.bg,
+                        fill: false,
+                        tension: 0.1
+                    }]
+                },
+                options: darkThemeOptions  
+            });
+        };
 
-        new Chart(document.getElementById('vix-graph'), {
-            type: 'line',
-            data: {
-                labels: vixData.dates,
-                datasets: [{
-                    label: vixData.label,
-                    data: vixData.values,
-                    borderColor: '#ef4444',
-                    backgroundColor: 'rgba(239, 68, 68, 0.15)',
-                    fill: false,
-                    tension: 0.1
-                }]
-            }
-        });
+        renderChart('oil-graph',    data.oil_price,    { border: '#f59e0b', bg: 'rgba(245, 158, 11, 0.15)' });
+        renderChart('dollar-graph', data.dollar_index, { border: '#10b981', bg: 'rgba(16, 185, 129, 0.15)' });
+        renderChart('vix-graph',    data.vix,          { border: '#ef4444', bg: 'rgba(239, 68, 68, 0.15)' });
+        renderChart('gold-graph',        data.gold,        { border: '#fbbf24', bg: 'rgba(251, 191, 36, 0.15)' });   // 금색
+        renderChart('natural-gas-graph', data.natural_gas, { border: '#60a5fa', bg: 'rgba(96, 165, 250, 0.15)' });   // 파랑
+        renderChart('wheat-graph',       data.wheat,       { border: '#d97706', bg: 'rgba(217, 119, 6, 0.15)' });    // 갈색
 
         isGlobalGraphDrawn = true;
 

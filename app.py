@@ -24,7 +24,6 @@ def get_market_data(country_code):
         return None, None, None
 
     if new_country_code == "USD":
-        # 프런트에서 버튼 이름이 dollar index라고 나오게 바꾸기 
         exchange_rate = final_data("DX-Y.NYB", "Dollar Index (DXY)", "index")
     else:
         exchange_rate = fetch_exchange_series("USD", new_country_code, last_month, today)
@@ -40,8 +39,27 @@ def get_market_data(country_code):
     }
     
     risk = risk_calculate(series)
-    # risk = {"risk_level": "None"}
     return series, risk, new_country_code
+
+@cache.memoize(timeout=300) 
+def global_indicator():
+    oil_price = final_data("CL=F", "WTI Crude", "USD/bbl")
+    dollar_index = final_data("DX-Y.NYB", "Dollar Index (DXY)", "index")
+    vix = final_data("^VIX", "CBOE Volatility Index (VIX)", "index")
+    gold = final_data("GC=F", "Gold", "USD/oz")
+    natural_gas = final_data("NG=F", "Natural Gas", "USD/MMBtu")
+    wheat = final_data("ZW=F", "Wheat", "USD/bu")
+
+
+    series = {
+        "oil_price": oil_price,
+        "dollar_index": dollar_index,
+        "vix": vix,
+        "gold": gold,
+        "natural_gas": natural_gas,
+        "wheat": wheat,
+    }
+    return series
 
 @app.route('/', methods=['GET'])
 def index():
@@ -67,18 +85,9 @@ def country_explain(country_code):
 
 @app.route('/api/global/global_indicators')
 @cache.memoize(timeout=300) 
-def global_indicator():
-    oil_price = final_data("CL=F", "WTI Crude", "USD/bbl")
-    dollar_index = final_data("DX-Y.NYB", "Dollar Index (DXY)", "index")
-    vix = final_data("^VIX", "CBOE Volatility Index (VIX)", "index")
-
-    series = {
-        "oil_price": oil_price,
-        "dollar_index": dollar_index,
-        "vix": vix
-    }
-
-    return jsonify(series)
+def common_data():
+   series = global_indicator()
+   return jsonify(series)
 
 if __name__ == '__main__':
     app.run()
